@@ -1,5 +1,6 @@
 package com.algaworks.algashop.product.catalog.presentation;
 
+import com.algaworks.algashop.product.catalog.application.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.Nullable;
@@ -20,6 +21,7 @@ import java.net.URI;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RequiredArgsConstructor
 @RestControllerAdvice
@@ -54,6 +56,17 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         problemDetail.setTitle("Internal Server Error");
         problemDetail.setDetail("An unexpected internal error occurred");
         problemDetail.setType(URI.create("/errors/internal-server-error"));
+        log.error(ex.getMessage(), ex);
+        return problemDetail;
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ProblemDetail handleResourceNotFoundException(final ResourceNotFoundException ex,
+                                                         final WebRequest request) {
+        final var problemDetail = ProblemDetail.forStatus(NOT_FOUND);
+        problemDetail.setTitle("Not Found");
+        problemDetail.setDetail(ex.getMessage());
+        problemDetail.setType(URI.create("/errors/not-found"));
         log.error(ex.getMessage(), ex);
         return problemDetail;
     }

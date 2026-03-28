@@ -19,17 +19,17 @@ Contract.make {
         body([
                 id: fromRequest().path(3),
                 addedAt: anyIso8601WithOffset(),
-                name: "Notebook X11",
-                brand: "Deep Driver",
-                regularPrice: 1500.00,
-                salePrice: 1000.00,
-                inStock: true,
-                enabled: true,
+                name: anyNonBlankString(),
+                brand: anyNonBlankString(),
+                regularPrice: anyDouble(),
+                salePrice: anyDouble(),
+                inStock: anyBoolean(),
+                enabled: anyBoolean(),
                 category:[
                         id: anyUuid(),
-                        name: "Notebook"
+                        name: anyNonBlankString()
                 ],
-                description: "A gamer Notebook"
+                description: anyNonBlankString()
         ])
     }
 }

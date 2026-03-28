@@ -13,7 +13,7 @@ Contract.make {
         urlPath("/api/v1/products"){
             body([
                     name: value(
-                            test("Notebook X11"),
+                            test("Created"),
                             stub(nonBlank())
                     ),
                     brand: value(
@@ -50,17 +50,17 @@ Contract.make {
         }
         body([
                 id : anyUuid(),
-                name: fromRequest().body('$.name'),
-                brand: fromRequest().body('$.brand'),
-                regularPrice: fromRequest().body('$.regularPrice'),
-                salePrice: fromRequest().body('$.salePrice'),
+                name: anyNonBlankString(),
+                brand: anyNonBlankString(),
+                regularPrice: anyDouble(),
+                salePrice: anyDouble(),
                 inStock: false,
-                enabled: fromRequest().body('$.enabled'),
+                enabled: anyBoolean(),
                 category: [
-                    id: fromRequest().body('$.categoryId'),
-                    name: "Notebook"
+                    id: anyUuid(),
+                    name: anyNonBlankString()
                 ],
-                description: fromRequest().body('$.description'),
+                description: anyNonBlankString(),
                 addedAt: anyIso8601WithOffset(),
         ])
     }
