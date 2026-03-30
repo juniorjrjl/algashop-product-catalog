@@ -14,8 +14,8 @@ public class ProductManagementApplicationService {
     public void update(final UUID id, final ProductInput input) {
     }
 
-    public UUID disable(final ProductInput input) {
-        return null;
+    public void disable(final UUID id) {
+
     }
 
 }

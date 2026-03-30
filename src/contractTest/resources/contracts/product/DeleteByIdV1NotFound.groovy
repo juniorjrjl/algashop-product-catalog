@@ -6,14 +6,14 @@ import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON_VALUE
 
 Contract.make {
     request {
-        method GET()
+        method DELETE()
         headers {
             accept APPLICATION_JSON_VALUE
         }
-        url("/api/v1/products/21651a12-b126-4213-ac21-19f66ff4642e")
+        url("/api/v1/products/21651a12-b126-4213-ac21-19f66ff4642f")
     }
     response {
-        status 404
+        status NOT_FOUND()
         headers {
             contentType APPLICATION_PROBLEM_JSON_VALUE
         }

@@ -2,18 +2,19 @@ package contracts.product
 
 import org.springframework.cloud.contract.spec.Contract
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE
+import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON_VALUE
 
 Contract.make {
     request {
-        method POST()
+        method PUT()
         headers {
             accept APPLICATION_JSON_VALUE
             contentType APPLICATION_JSON_VALUE
         }
-        urlPath("/api/v1/products"){
+        urlPath("/api/v1/products/019d3f21-af98-7db1-8bb7-b248dc05a4a4"){
             body([
                     name: value(
-                            test("Created"),
+                            test("NotFound"),
                             stub(nonBlank())
                     ),
                     brand: value(
@@ -44,25 +45,14 @@ Contract.make {
         }
     }
     response {
-        status CREATED()
+        status NOT_FOUND()
         headers {
-            contentType APPLICATION_JSON_VALUE
+            contentType APPLICATION_PROBLEM_JSON_VALUE
         }
         body([
-                id : anyUuid(),
-                name: anyNonBlankString(),
-                brand: anyNonBlankString(),
-                regularPrice: anyDouble(),
-                salePrice: anyDouble(),
-                inStock: false,
-                enabled: anyBoolean(),
-                category: [
-                    id: anyUuid(),
-                    name: anyNonBlankString()
-                ],
-                description: anyNonBlankString(),
-                addedAt: anyIso8601WithOffset(),
+                instance: fromRequest().path(),
+                type: "/errors/not-found",
+                title: "Not Found"
         ])
     }
 }
-

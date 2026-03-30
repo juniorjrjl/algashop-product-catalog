@@ -20,7 +20,11 @@ import org.springframework.web.context.WebApplicationContext;
 import java.util.UUID;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,22 +45,41 @@ class ProductBase {
                         .defaultResponseCharacterEncoding(UTF_8).build());
         RestAssuredMockMvc.enableLoggingOfRequestAndResponseIfValidationFails();
 
-        when(queryService.findById(UUID.fromString("6e148bd5-47f6-4022-b9da-07cfaa294f7a")))
+        findByIdMocks();
+        filterMocks();
+        insertMocks();
+        updateMocks();
+        deleteMocks();
+    }
+
+    private void deleteMocks() {
+        doNothing().when(applicationService)
+                .disable(UUID.fromString("6e148bd5-47f6-4022-b9da-07cfaa294f7b"));
+        doThrow(ResourceNotFoundException.class).when(applicationService)
+                .disable(UUID.fromString("21651a12-b126-4213-ac21-19f66ff4642f"));
+    }
+
+    private void updateMocks() {
+        final var productId = UUID.fromString("019d3f21-af98-7db1-8bb7-b248dc05a4a3");
+        doNothing().when(applicationService)
+                .update(
+                        eq(productId),
+                        argThat(i -> i.getName().equals("Updated"))
+                );
+        when(queryService.findById(productId))
                 .thenReturn(ProductDetailOutputDataBuilder.builder()
-                        .withId(() -> UUID.fromString("6e148bd5-47f6-4022-b9da-07cfaa294f7a"))
+                        .withId(() -> productId)
+                        .withInStock(() -> false)
                         .build());
 
-        when(queryService.findById(UUID.fromString("21651a12-b126-4213-ac21-19f66ff4642e")))
-                .thenThrow(new ResourceNotFoundException());
+        doThrow(ResourceNotFoundException.class).when(applicationService)
+                .update(
+                        eq(UUID.fromString("019d3f21-af98-7db1-8bb7-b248dc05a4a4")),
+                        any()
+                );
+    }
 
-        final var page =  PageModel.<ProductDetailOutput>builder()
-                .content(ProductDetailOutputDataBuilder.builder().buildList(2))
-                .number(0)
-                .totalPages(1)
-                .totalElements(2)
-                .build();
-        when(queryService.filter(10, 0)).thenReturn(page);
-
+    private void insertMocks() {
         final var productId = UUID.randomUUID();
         when(applicationService.create(argThat(i -> i.getName().equals("Created"))))
                 .thenReturn(productId);
@@ -65,6 +88,26 @@ class ProductBase {
                         .withId(() -> productId)
                         .withInStock(() -> false)
                         .build());
+    }
+
+    private void filterMocks() {
+        final var page = PageModel.<ProductDetailOutput>builder()
+                .content(ProductDetailOutputDataBuilder.builder().buildList(2))
+                .number(0)
+                .totalPages(1)
+                .totalElements(2)
+                .build();
+        when(queryService.filter(10, 0)).thenReturn(page);
+    }
+
+    private void findByIdMocks() {
+        when(queryService.findById(UUID.fromString("6e148bd5-47f6-4022-b9da-07cfaa294f7a")))
+                .thenReturn(ProductDetailOutputDataBuilder.builder()
+                        .withId(() -> UUID.fromString("6e148bd5-47f6-4022-b9da-07cfaa294f7a"))
+                        .build());
+
+        when(queryService.findById(UUID.fromString("21651a12-b126-4213-ac21-19f66ff4642e")))
+                .thenThrow(new ResourceNotFoundException());
     }
 
 }

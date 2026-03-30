@@ -5,15 +5,15 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 
 Contract.make {
     request {
-        method POST()
+        method PUT()
         headers {
             accept APPLICATION_JSON_VALUE
             contentType APPLICATION_JSON_VALUE
         }
-        urlPath("/api/v1/products"){
+        urlPath("/api/v1/products/019d3f21-af98-7db1-8bb7-b248dc05a4a3"){
             body([
                     name: value(
-                            test("Created"),
+                            test("Updated"),
                             stub(nonBlank())
                     ),
                     brand: value(
@@ -44,12 +44,12 @@ Contract.make {
         }
     }
     response {
-        status CREATED()
+        status OK()
         headers {
             contentType APPLICATION_JSON_VALUE
         }
         body([
-                id : anyUuid(),
+                id : "019d3f21-af98-7db1-8bb7-b248dc05a4a3",
                 name: anyNonBlankString(),
                 brand: anyNonBlankString(),
                 regularPrice: anyDouble(),
