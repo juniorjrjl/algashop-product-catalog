@@ -12,6 +12,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.restdocs.RestDocumentationContextProvider;
+import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
+import org.springframework.restdocs.operation.preprocess.Preprocessors;
+import org.springframework.restdocs.templates.TemplateFormats;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -24,7 +29,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
+@ExtendWith({MockitoExtension.class, RestDocumentationExtension.class})
 @WebMvcTest(CategoryController.class)
 class CategoryBase {
 
@@ -37,8 +42,13 @@ class CategoryBase {
     private CategoryManagementApplicationService applicationService;
 
     @BeforeEach
-    void setUp() {
+    void setUp(final RestDocumentationContextProvider restDocumentation) {
         RestAssuredMockMvc.mockMvc(MockMvcBuilders.webAppContextSetup(context)
+                        .apply(MockMvcRestDocumentation.documentationConfiguration(restDocumentation)
+                                .snippets().withTemplateFormat(TemplateFormats.asciidoctor())
+                                .and().operationPreprocessors()
+                                .withResponseDefaults(Preprocessors.prettyPrint())
+                        ).alwaysDo(MockMvcRestDocumentation.document("{ClassName}/{methodName}"))
                 .defaultResponseCharacterEncoding(UTF_8).build());
         RestAssuredMockMvc.enableLoggingOfRequestAndResponseIfValidationFails();
 

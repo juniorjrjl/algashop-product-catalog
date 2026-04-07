@@ -1,13 +1,19 @@
 package com.algaworks.algashop.product.catalog.application.category.query;
 
 import com.algaworks.algashop.product.catalog.application.product.query.PageModel;
+import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
-public interface CategoryQueryService {
+@Service
+public class CategoryQueryService {
 
-    PageModel<CategoryDetailOutput> filter(final Integer size, final Integer number);
+    public PageModel<CategoryDetailOutput> filter(final Integer size, final Integer number){
+        return null;
+    }
 
-    CategoryDetailOutput findById(final UUID categoryId);
+    public CategoryDetailOutput findById(final UUID categoryId){
+        return null;
+    }
 
 }

@@ -1,11 +1,18 @@
 package com.algaworks.algashop.product.catalog.application.product.query;
 
+import org.springframework.stereotype.Service;
+
 import java.util.UUID;
 
-public interface ProductQueryService {
+@Service
+public class ProductQueryService {
 
-    ProductDetailOutput findById(final UUID id);
+    public ProductDetailOutput findById(final UUID id){
+        return null;
+    }
 
-    PageModel<ProductDetailOutput> filter(final Integer size, final Integer number);
+    public PageModel<ProductDetailOutput> filter(final Integer size, final Integer number){
+        return null;
+    }
 
 }

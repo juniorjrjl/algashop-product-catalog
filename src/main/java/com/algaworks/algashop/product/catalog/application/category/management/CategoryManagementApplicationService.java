@@ -1,7 +1,10 @@
 package com.algaworks.algashop.product.catalog.application.category.management;
 
+import org.springframework.stereotype.Service;
+
 import java.util.UUID;
 
+@Service
 public class CategoryManagementApplicationService {
 
     public UUID create(final CategoryInput input) {
