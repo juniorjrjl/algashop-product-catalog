@@ -1,0 +1,45 @@
+[versions]
+springBoot = "4.0.5"
+springDependencyManagement = "1.1.7"
+springCloudContract = "5.0.0"
+springCloud = "2025.1.0"
+asciidoctor = "4.0.5"
+rest-assured = "5.5.7"
+datafaker = "2.5.4"
+lombok-mapstruct = "0.2.0"
+
+[plugins]
+spring-boot = { id = "org.springframework.boot", version.ref = "springBoot" }
+spring-dependency-management = { id = "io.spring.dependency-management", version.ref = "springDependencyManagement" }
+spring-cloud-contract = { id = "org.springframework.cloud.contract", version.ref = "springCloudContract" }
+asciidoctor-convert = { id = "org.asciidoctor.jvm.convert", version.ref = "asciidoctor" }
+
+[libraries]
+# --- IMPLEMENTATION ---
+spring-boot-starter-validation = { group = "org.springframework.boot", name = "spring-boot-starter-validation" }
+spring-boot-starter-webmvc = { group = "org.springframework.boot", name = "spring-boot-starter-webmvc" }
+
+# --- ASCIIDOCTOR / DOCUMENTATION ---
+spring-restdocs-asciidoctor = { group = "org.springframework.restdocs", name = "spring-restdocs-asciidoctor" }
+spring-restdocs-mockmvc = { group = "org.springframework.restdocs", name = "spring-restdocs-mockmvc" }
+
+# --- COMPILE ONLY ---
+lombok = { group = "org.projectlombok", name = "lombok" }
+
+# --- ANNOTATION PROCESSORS ---
+lombok-mapstruct-binding = { group = "org.projectlombok", name = "lombok-mapstruct-binding", version.ref = "lombok-mapstruct" }
+
+# --- TEST IMPLEMENTATION ---
+spring-boot-starter-validation-test = { group = "org.springframework.boot", name = "spring-boot-starter-validation-test" }
+spring-boot-starter-webmvc-test = { group = "org.springframework.boot", name = "spring-boot-starter-webmvc-test" }
+spring-boot-starter-test = { group = "org.springframework.boot", name = "spring-boot-starter-test" }
+spring-cloud-starter-contract-verifier = { group = "org.springframework.cloud", name = "spring-cloud-starter-contract-verifier" }
+rest-assured-spring-mock-mvc = { group = "io.rest-assured", name = "spring-mock-mvc", version.ref = "rest-assured" }
+datafaker = { group = "net.datafaker", name = "datafaker", version.ref = "datafaker" }
+
+# --- TEST RUNTIME & AGENTS ---
+mockito-core = { group = "org.mockito", name = "mockito-core" }
+junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher" }
+
+#EXTRA
+spring-cloud-dependencies = { group = "org.springframework.cloud", name = "spring-cloud-dependencies", version.ref = "springCloud" }

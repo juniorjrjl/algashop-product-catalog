@@ -2,11 +2,11 @@ import org.gradle.internal.extensions.core.extra
 
 plugins {
 	java
-	id("maven-publish")
-	id("org.springframework.boot") version "4.0.5"
-	id("io.spring.dependency-management") version "1.1.7"
-	id("org.springframework.cloud.contract") version "5.0.0"
-	id("org.asciidoctor.jvm.convert") version "4.0.5"
+	`maven-publish`
+	alias(libs.plugins.spring.boot)
+	alias(libs.plugins.spring.dependency.management)
+	alias(libs.plugins.spring.cloud.contract)
+	alias(libs.plugins.asciidoctor.convert)
 }
 
 java {
@@ -16,7 +16,6 @@ java {
 }
 
 extra.apply {
-	set("springCloudVersion", "2025.1.0")
 	set("snippetsDir", file("build/generated-snippets"))
 }
 
@@ -48,39 +47,43 @@ publishing {
 }
 
 dependencies {
-	implementation("org.springframework.boot:spring-boot-starter-validation")
-	implementation("org.springframework.boot:spring-boot-starter-webmvc")
+	// IMPLEMENTATION
+	implementation(libs.spring.boot.starter.validation)
+	implementation(libs.spring.boot.starter.webmvc)
 
-	"asciidoctorExt"("org.springframework.restdocs:spring-restdocs-asciidoctor")
+	// ASCIIDOCTOR EXTENSION
+	"asciidoctorExt"(libs.spring.restdocs.asciidoctor)
 
+	// COMPILE ONLY
+	compileOnly(libs.lombok)
 
-	compileOnly("org.projectlombok:lombok")
+	// ANNOTATION PROCESSOR
+	annotationProcessor(libs.lombok)
+	annotationProcessor(libs.lombok.mapstruct.binding)
 
-	annotationProcessor("org.projectlombok:lombok")
-	annotationProcessor("org.projectlombok:lombok-mapstruct-binding:0.2.0")
+	// TEST COMPILE / ANNOTATION PROCESSOR
+	testCompileOnly(libs.lombok)
+	testAnnotationProcessor(libs.lombok)
 
-	testCompileOnly("org.projectlombok:lombok")
+	// TEST IMPLEMENTATION
+	testImplementation(libs.spring.boot.starter.validation.test)
+	testImplementation(libs.spring.boot.starter.webmvc.test)
+	testImplementation(libs.spring.boot.starter.test)
+	testImplementation(libs.spring.cloud.starter.contract.verifier)
+	testImplementation(libs.rest.assured.spring.mock.mvc)
+	testImplementation(libs.datafaker)
+	testImplementation(libs.spring.restdocs.mockmvc)
 
-	testAnnotationProcessor("org.projectlombok:lombok")
-
-	testImplementation("org.springframework.boot:spring-boot-starter-validation-test")
-	testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
-	testImplementation("org.springframework.cloud:spring-cloud-starter-contract-verifier")
-	testImplementation("org.springframework.boot:spring-boot-starter-test")
-	testImplementation("io.rest-assured:spring-mock-mvc:5.5.7")
-	testImplementation("net.datafaker:datafaker:2.5.4")
-	testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
-
-	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-
-	mockitoAgent("org.mockito:mockito-core"){
+	// MOCKITO AGENT & RUNTIME
+	mockitoAgent(libs.mockito.core) {
 		isTransitive = false
 	}
+	testRuntimeOnly(libs.junit.platform.launcher)
 }
 
 dependencyManagement {
 	imports {
-		mavenBom("org.springframework.cloud:spring-cloud-dependencies:${property("springCloudVersion")}")
+		mavenBom(libs.spring.cloud.dependencies.get().toString())
 	}
 }
 
