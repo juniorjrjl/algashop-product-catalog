@@ -23,7 +23,7 @@ group = "com.algaworks.algashop"
 version = "0.0.1-SNAPSHOT"
 description = "Demo project for Spring Boot"
 
-val mockitoAgent: Configuration = configurations.create("mockitoAgent")
+val mockitoAgent = configurations.create("mockitoAgent")
 
 configurations {
 	compileOnly {
