@@ -3,6 +3,7 @@ import org.gradle.internal.extensions.core.extra
 plugins {
 	java
 	`maven-publish`
+	jacoco
 	alias(libs.plugins.spring.boot)
 	alias(libs.plugins.spring.dependency.management)
 	alias(libs.plugins.spring.cloud.contract)
@@ -96,15 +97,17 @@ tasks.withType<Test> {
 	testLogging {
 		events("passed", "skipped", "failed")
 	}
-	jvmArgs(
-		"-javaagent:${configurations.getByName("mockitoAgent").asPath}"
-	)
+	jvmArgs("-javaagent:${mockitoAgent.asPath}")
+	finalizedBy(tasks.jacocoTestReport)
+	systemProperty("test.seed", System.getProperty("test.seed") ?: "")
 }
 
 tasks.contractTest {
 	outputs.dir(project.property("snippetsDir") as File)
 	useJUnitPlatform()
-
+	jvmArgs("-javaagent:${mockitoAgent.asPath}")
+	finalizedBy(tasks.jacocoTestReport)
+	systemProperty("test.seed", System.getProperty("test.seed") ?: "")
 }
 
 tasks.asciidoctor {
