@@ -1,13 +1,13 @@
 import org.gradle.internal.extensions.core.extra
 
 plugins {
+	alias(libs.plugins.asciidoctor.convert)
+	alias(libs.plugins.spring.boot)
+	alias(libs.plugins.spring.cloud.contract)
+	alias(libs.plugins.spring.dependency.management)
+	jacoco
 	java
 	`maven-publish`
-	jacoco
-	alias(libs.plugins.spring.boot)
-	alias(libs.plugins.spring.dependency.management)
-	alias(libs.plugins.spring.cloud.contract)
-	alias(libs.plugins.asciidoctor.convert)
 }
 
 java {
@@ -48,37 +48,33 @@ publishing {
 }
 
 dependencies {
-	// IMPLEMENTATION
-	implementation(libs.spring.boot.starter.validation)
-	implementation(libs.spring.boot.starter.webmvc)
 
-	// ASCIIDOCTOR EXTENSION
 	"asciidoctorExt"(libs.spring.restdocs.asciidoctor)
 
-	// COMPILE ONLY
-	compileOnly(libs.lombok)
-
-	// ANNOTATION PROCESSOR
 	annotationProcessor(libs.lombok)
 	annotationProcessor(libs.lombok.mapstruct.binding)
 
-	// TEST COMPILE / ANNOTATION PROCESSOR
-	testCompileOnly(libs.lombok)
-	testAnnotationProcessor(libs.lombok)
+	compileOnly(libs.lombok)
 
-	// TEST IMPLEMENTATION
-	testImplementation(libs.spring.boot.starter.validation.test)
-	testImplementation(libs.spring.boot.starter.webmvc.test)
-	testImplementation(libs.spring.boot.starter.test)
-	testImplementation(libs.spring.cloud.starter.contract.verifier)
-	testImplementation(libs.rest.assured.spring.mock.mvc)
-	testImplementation(libs.datafaker)
-	testImplementation(libs.spring.restdocs.mockmvc)
+	implementation(libs.spring.boot.starter.validation)
+	implementation(libs.spring.boot.starter.webmvc)
 
-	// MOCKITO AGENT & RUNTIME
 	mockitoAgent(libs.mockito.core) {
 		isTransitive = false
 	}
+
+	testAnnotationProcessor(libs.lombok)
+
+	testCompileOnly(libs.lombok)
+
+	testImplementation(libs.datafaker)
+	testImplementation(libs.rest.assured.spring.mock.mvc)
+	testImplementation(libs.spring.boot.starter.test)
+	testImplementation(libs.spring.boot.starter.validation.test)
+	testImplementation(libs.spring.boot.starter.webmvc.test)
+	testImplementation(libs.spring.cloud.starter.contract.verifier)
+	testImplementation(libs.spring.restdocs.mockmvc)
+
 	testRuntimeOnly(libs.junit.platform.launcher)
 }
 
