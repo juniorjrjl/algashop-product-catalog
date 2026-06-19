@@ -53,9 +53,14 @@ dependencies {
 
 	annotationProcessor(libs.lombok)
 	annotationProcessor(libs.lombok.mapstruct.binding)
+	annotationProcessor(libs.mapstruct.processor)
 
 	compileOnly(libs.lombok)
 
+	implementation(libs.commons.lang3)
+	implementation(libs.mapstruct)
+	implementation(libs.java.uuid.generator)
+	implementation(libs.spring.boot.starter.data.mongodb)
 	implementation(libs.spring.boot.starter.validation)
 	implementation(libs.spring.boot.starter.webmvc)
 
@@ -69,6 +74,7 @@ dependencies {
 
 	testImplementation(libs.datafaker)
 	testImplementation(libs.rest.assured.spring.mock.mvc)
+	implementation(libs.spring.boot.starter.data.mongodb.test)
 	testImplementation(libs.spring.boot.starter.test)
 	testImplementation(libs.spring.boot.starter.validation.test)
 	testImplementation(libs.spring.boot.starter.webmvc.test)

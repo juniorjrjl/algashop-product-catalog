@@ -6,14 +6,10 @@ import org.springframework.stereotype.Service;
 import java.util.UUID;
 
 @Service
-public class CategoryQueryService {
+public interface CategoryQueryService {
 
-    public PageModel<CategoryDetailOutput> filter(final Integer size, final Integer number){
-        return null;
-    }
+    PageModel<CategoryDetailOutput> filter(final Integer size, final Integer number);
 
-    public CategoryDetailOutput findById(final UUID categoryId){
-        return null;
-    }
+    CategoryDetailOutput findById(final UUID categoryId);
 
 }
