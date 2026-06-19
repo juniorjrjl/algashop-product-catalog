@@ -10,7 +10,7 @@ Contract.make {
         headers {
             accept APPLICATION_JSON_VALUE
         }
-        url("/api/v1/products/21651a12-b126-4213-ac21-19f66ff4642f")
+        url("/api/v1/products/21651a12-b126-4213-ac21-19f66ff4642f/enable")
     }
     response {
         status NOT_FOUND()

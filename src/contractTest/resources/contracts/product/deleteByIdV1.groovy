@@ -9,7 +9,7 @@ Contract.make {
         headers {
             accept APPLICATION_JSON_VALUE
         }
-        url("/api/v1/products/6e148bd5-47f6-4022-b9da-07cfaa294f7b")
+        url("/api/v1/products/6e148bd5-47f6-4022-b9da-07cfaa294f7b/enable")
     }
     response {
         status NO_CONTENT()

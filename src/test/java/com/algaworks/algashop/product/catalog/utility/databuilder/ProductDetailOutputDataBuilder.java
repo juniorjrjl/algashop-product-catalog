@@ -10,10 +10,8 @@ import lombok.With;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static lombok.AccessLevel.PRIVATE;
@@ -52,7 +50,7 @@ public class ProductDetailOutputDataBuilder {
     public ProductDetailOutput build() {
         return ProductDetailOutput.builder()
                 .id(id.get())
-                .addedAt(addedAt.get())
+                .createdAt(addedAt.get())
                 .name(name.get())
                 .brand(brand.get())
                 .regularPrice(regularPrice.get())

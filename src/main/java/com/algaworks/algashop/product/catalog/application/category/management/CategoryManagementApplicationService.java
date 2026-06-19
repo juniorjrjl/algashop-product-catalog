@@ -1,7 +1,7 @@
 package com.algaworks.algashop.product.catalog.application.category.management;
 
-import com.algaworks.algashop.product.catalog.application.ResourceNotFoundException;
 import com.algaworks.algashop.product.catalog.domain.model.category.Category;
+import com.algaworks.algashop.product.catalog.domain.model.category.CategoryNotFoundException;
 import com.algaworks.algashop.product.catalog.domain.model.category.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,7 @@ public class CategoryManagementApplicationService {
 
     public void update(final UUID id, final CategoryInput input) {
         final var domain = repository.findById(id)
-                .orElseThrow(ResourceNotFoundException::new);
+                .orElseThrow(() -> new CategoryNotFoundException(id));
         domain.setName(input.getName());
         domain.setEnabled(input.getEnabled());
         repository.save(domain);
@@ -30,7 +30,7 @@ public class CategoryManagementApplicationService {
 
     public void disable(final UUID id) {
         final var domain = repository.findById(id)
-                .orElseThrow(ResourceNotFoundException::new);
+                .orElseThrow(() -> new CategoryNotFoundException(id));
         domain.setEnabled(false);
         repository.save(domain);
     }

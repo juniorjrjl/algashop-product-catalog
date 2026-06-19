@@ -28,7 +28,7 @@ Contract.make {
                     content:[
                         [
                             id: anyUuid(),
-                            addedAt: anyIso8601WithOffset(),
+                            createdAt: anyIso8601WithOffset(),
                             name: anyNonBlankString(),
                             brand: anyNonBlankString(),
                             regularPrice: anyDouble(),
@@ -43,7 +43,7 @@ Contract.make {
                         ],
                         [
                             id: anyUuid(),
-                            addedAt: anyIso8601WithOffset(),
+                            createdAt: anyIso8601WithOffset(),
                             name: anyNonBlankString(),
                             brand: anyNonBlankString(),
                             regularPrice: anyDouble(),

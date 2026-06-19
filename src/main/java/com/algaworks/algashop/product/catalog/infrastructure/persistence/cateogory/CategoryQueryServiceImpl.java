@@ -4,6 +4,7 @@ import com.algaworks.algashop.product.catalog.application.ResourceNotFoundExcept
 import com.algaworks.algashop.product.catalog.application.category.query.CategoryDetailOutput;
 import com.algaworks.algashop.product.catalog.application.category.query.CategoryQueryService;
 import com.algaworks.algashop.product.catalog.application.product.query.PageModel;
+import com.algaworks.algashop.product.catalog.domain.model.category.CategoryNotFoundException;
 import com.algaworks.algashop.product.catalog.domain.model.category.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,7 +26,7 @@ public class CategoryQueryServiceImpl implements CategoryQueryService {
     @Override
     public CategoryDetailOutput findById(final UUID categoryId) {
         final var domain = repository.findById(categoryId)
-                .orElseThrow(ResourceNotFoundException::new);
+                .orElseThrow(() -> new CategoryNotFoundException(categoryId));
         return disassembler.toDetailOutput(domain);
     }
 }

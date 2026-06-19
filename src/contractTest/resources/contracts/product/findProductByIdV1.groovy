@@ -18,7 +18,7 @@ Contract.make {
         }
         body([
                 id: fromRequest().path(3),
-                addedAt: anyIso8601WithOffset(),
+                createdAt: anyIso8601WithOffset(),
                 name: anyNonBlankString(),
                 brand: anyNonBlankString(),
                 regularPrice: anyDouble(),

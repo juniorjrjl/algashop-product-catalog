@@ -1,6 +1,8 @@
 package com.algaworks.algashop.product.catalog.presentation;
 
 import com.algaworks.algashop.product.catalog.application.ResourceNotFoundException;
+import com.algaworks.algashop.product.catalog.domain.model.DomainEntityNotFoundException;
+import com.algaworks.algashop.product.catalog.domain.model.DomainException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.Nullable;
@@ -22,6 +24,7 @@ import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.UNPROCESSABLE_CONTENT;
 
 @RequiredArgsConstructor
 @RestControllerAdvice
@@ -60,13 +63,23 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return problemDetail;
     }
 
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ProblemDetail handleResourceNotFoundException(final ResourceNotFoundException ex,
+    @ExceptionHandler({ResourceNotFoundException.class, DomainEntityNotFoundException.class})
+    public ProblemDetail handleResourceNotFoundException(final Exception ex,
                                                          final WebRequest request) {
         final var problemDetail = ProblemDetail.forStatus(NOT_FOUND);
         problemDetail.setTitle("Not Found");
         problemDetail.setDetail(ex.getMessage());
         problemDetail.setType(URI.create("/errors/not-found"));
+        log.error(ex.getMessage(), ex);
+        return problemDetail;
+    }
+
+    @ExceptionHandler({UnprocessableContentException.class, UnprocessableContentException.class})
+    public ProblemDetail handleUnprocessableContentException(final Exception ex){
+        final var problemDetail = ProblemDetail.forStatus(UNPROCESSABLE_CONTENT);
+        problemDetail.setTitle("Unprocessable Content");
+        problemDetail.setDetail(ex.getMessage());
+        problemDetail.setType(URI.create("/errors/unprocessable-content"));
         log.error(ex.getMessage(), ex);
         return problemDetail;
     }

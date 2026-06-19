@@ -61,7 +61,7 @@ Contract.make {
                     name: anyNonBlankString()
                 ],
                 description: anyNonBlankString(),
-                addedAt: anyIso8601WithOffset(),
+                createdAt: anyIso8601WithOffset(),
         ])
     }
 }

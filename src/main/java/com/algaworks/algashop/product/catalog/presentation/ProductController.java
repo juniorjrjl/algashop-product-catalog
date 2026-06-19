@@ -5,6 +5,7 @@ import com.algaworks.algashop.product.catalog.application.product.management.Pro
 import com.algaworks.algashop.product.catalog.application.product.query.PageModel;
 import com.algaworks.algashop.product.catalog.application.product.query.ProductDetailOutput;
 import com.algaworks.algashop.product.catalog.application.product.query.ProductQueryService;
+import com.algaworks.algashop.product.catalog.domain.model.category.CategoryNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -35,7 +36,12 @@ public class ProductController {
     @PostMapping
     @ResponseStatus(CREATED)
     public ProductDetailOutput create(@RequestBody @Valid final ProductInput input){
-        final var id = applicationService.create(input);
+        final UUID id;
+        try{
+            id = applicationService.create(input);
+        }catch (final CategoryNotFoundException ex){
+            throw new UnprocessableContentException(ex.getMessage(), ex);
+        }
         return queryService.findById(id);
     }
 
@@ -47,10 +53,16 @@ public class ProductController {
         return queryService.findById(id);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}/enable")
     @ResponseStatus(NO_CONTENT)
-    public void delete(@PathVariable UUID id) {
+    public void disable(@PathVariable final UUID id) {
         applicationService.disable(id);
+    }
+
+    @PutMapping("/{id}/enable")
+    @ResponseStatus(NO_CONTENT)
+    public void enable(@PathVariable final UUID id) {
+        applicationService.enable(id);
     }
 
     @GetMapping("/{id}")
