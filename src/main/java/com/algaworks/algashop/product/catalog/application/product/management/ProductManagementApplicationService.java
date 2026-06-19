@@ -21,8 +21,8 @@ public class ProductManagementApplicationService {
     private final ProductAssembler assembler;
 
     public UUID create(final ProductInput input) {
-        final var domainModel = assembler.toDomainModel(input);
         final var category = findCategoryById(input.getCategoryId());
+        final var domainModel = assembler.toDomainModel(input, category);
         repository.save(domainModel);
         return domainModel.getId();
     }
@@ -30,7 +30,7 @@ public class ProductManagementApplicationService {
     public void update(final UUID id, final ProductInput input) {
         final var domainModel = findById(id);
         final var category = findCategoryById(input.getCategoryId());
-        assembler.updatedDomainModel(input, domainModel);
+        assembler.updatedDomainModel(input, category, domainModel);
         repository.save(domainModel);
     }
 

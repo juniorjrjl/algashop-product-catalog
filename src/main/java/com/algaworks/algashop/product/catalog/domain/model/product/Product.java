@@ -2,6 +2,7 @@ package com.algaworks.algashop.product.catalog.domain.model.product;
 
 import com.algaworks.algashop.product.catalog.domain.model.DomainException;
 import com.algaworks.algashop.product.catalog.domain.model.IdGenerator;
+import com.algaworks.algashop.product.catalog.domain.model.category.Category;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,12 +13,16 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DocumentReference;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
+import static java.math.RoundingMode.HALF_UP;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static lombok.AccessLevel.PRIVATE;
@@ -33,8 +38,7 @@ public class Product {
     @Setter
     @Nullable
     private String description;
-    @Nullable
-    private Integer stockAmount;
+    private Integer stockAmount = 0;
     @Setter
     private boolean enabled;
     @Nullable
@@ -56,6 +60,12 @@ public class Product {
     @Nullable
     @Version
     private Long version;
+    @DocumentReference
+    @Field(name = "category_id")
+    @Setter
+    private Category category;
+    @Nullable
+    private Integer discountPercentageRounded;
 
     @Builder
     public Product(final String name,
@@ -63,7 +73,8 @@ public class Product {
                    final String description,
                    final boolean enabled,
                    final BigDecimal regularPrice,
-                   final BigDecimal salePrice) {
+                   final BigDecimal salePrice,
+                   final Category category) {
         this.setId(IdGenerator.generateTimeBasedUUID());
         this.setName(name);
         this.setBrand(brand);
@@ -71,6 +82,7 @@ public class Product {
         this.setEnabled(enabled);
         this.setRegularPrice(regularPrice);
         this.setSalePrice(salePrice);
+        this.setCategory(category);
     }
 
     public void setName(final String name) {
@@ -98,6 +110,7 @@ public class Product {
             throw new DomainException("The sale price cannot be higher than the regular price");
         }
         this.regularPrice = regularPrice;
+        this.calculateDiscountPercentage();
     }
 
     public  void setSalePrice(final BigDecimal salePrice) {
@@ -111,6 +124,7 @@ public class Product {
             throw new DomainException("The sale price cannot be higher than the regular price");
         }
         this.salePrice = salePrice;
+        this.calculateDiscountPercentage();
     }
 
     public void enable() {
@@ -122,14 +136,11 @@ public class Product {
     }
 
     public boolean isInStock() {
-        return nonNull(stockAmount) && stockAmount > 0;
+        return stockAmount > 0;
     }
 
-    private void setStockAmount(final Integer stockAmount) {
-        if (stockAmount < 0) {
-            throw new IllegalArgumentException();
-        }
-        this.stockAmount = stockAmount;
+    public boolean getHasDiscount(){
+        return nonNull(getDiscountPercentageRounded()) && getDiscountPercentageRounded() > 0;
     }
 
     @Override
@@ -142,4 +153,24 @@ public class Product {
     public int hashCode() {
         return Objects.hashCode(id);
     }
+
+    private void setStockAmount(final Integer stockAmount) {
+        if (stockAmount < 0) {
+            throw new IllegalArgumentException();
+        }
+        this.stockAmount = stockAmount;
+    }
+
+    private void calculateDiscountPercentage(){
+        if (isNull(regularPrice) || isNull(salePrice) || regularPrice.signum() == 0) {
+            discountPercentageRounded = 0;
+            return;
+        }
+        discountPercentageRounded = BigDecimal.ONE
+                .subtract(salePrice.divide(regularPrice, 4, HALF_UP))
+                .multiply(BigDecimal.valueOf(100))
+                .setScale(0, HALF_UP)
+                .intValue();
+    }
+
 }

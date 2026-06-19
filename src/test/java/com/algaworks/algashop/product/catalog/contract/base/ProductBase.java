@@ -3,10 +3,11 @@ package com.algaworks.algashop.product.catalog.contract.base;
 import com.algaworks.algashop.product.catalog.application.ResourceNotFoundException;
 import com.algaworks.algashop.product.catalog.application.product.management.ProductManagementApplicationService;
 import com.algaworks.algashop.product.catalog.application.product.query.PageModel;
-import com.algaworks.algashop.product.catalog.application.product.query.ProductDetailOutput;
 import com.algaworks.algashop.product.catalog.application.product.query.ProductQueryService;
+import com.algaworks.algashop.product.catalog.application.product.query.ProductSummaryOutput;
 import com.algaworks.algashop.product.catalog.presentation.ProductController;
 import com.algaworks.algashop.product.catalog.utility.databuilder.ProductDetailOutputDataBuilder;
+import com.algaworks.algashop.product.catalog.utility.databuilder.ProductSummaryOutputDataBuilder;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -101,8 +102,8 @@ class ProductBase {
     }
 
     private void filterMocks() {
-        final var page = PageModel.<ProductDetailOutput>builder()
-                .content(ProductDetailOutputDataBuilder.builder().buildList(2))
+        final var page = PageModel.<ProductSummaryOutput>builder()
+                .content(ProductSummaryOutputDataBuilder.builder().buildList(2))
                 .number(0)
                 .totalPages(1)
                 .totalElements(2)
