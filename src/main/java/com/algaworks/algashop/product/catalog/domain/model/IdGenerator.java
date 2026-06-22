@@ -9,7 +9,7 @@ import java.util.UUID;
 import static lombok.AccessLevel.PRIVATE;
 
 @NoArgsConstructor(access = PRIVATE)
-public class IdGenerator {
+public final class IdGenerator {
 
     private static final TimeBasedEpochRandomGenerator timeBasedEpochRandomGenerator
             = Generators.timeBasedEpochRandomGenerator();

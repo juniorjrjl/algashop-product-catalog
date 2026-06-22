@@ -2,11 +2,13 @@ package com.algaworks.algashop.product.catalog.infrastructure.persistence.produc
 
 import com.algaworks.algashop.product.catalog.application.product.query.PageModel;
 import com.algaworks.algashop.product.catalog.application.product.query.ProductDetailOutput;
+import com.algaworks.algashop.product.catalog.application.product.query.ProductFilter;
 import com.algaworks.algashop.product.catalog.application.product.query.ProductQueryService;
 import com.algaworks.algashop.product.catalog.application.product.query.ProductSummaryOutput;
 import com.algaworks.algashop.product.catalog.domain.model.product.ProductNotFoundException;
 import com.algaworks.algashop.product.catalog.domain.model.product.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -26,8 +28,9 @@ public class ProductQueryServiceImpl implements ProductQueryService {
     }
 
     @Override
-    public PageModel<ProductSummaryOutput> filter(final Integer size, final Integer number){
-        return null;
+    public PageModel<ProductSummaryOutput> filter(final ProductFilter filter){
+        final var domain = repository.findAll(PageRequest.of(filter.getPage(), filter.getSize()));
+        return disassembler.toPagedSummaryOutput(domain);
     }
 
 }

@@ -1,5 +1,6 @@
 package com.algaworks.algashop.product.catalog.infrastructure.persistence.product;
 
+import com.algaworks.algashop.product.catalog.application.product.query.PageModel;
 import com.algaworks.algashop.product.catalog.application.product.query.ProductDetailOutput;
 import com.algaworks.algashop.product.catalog.application.product.query.ProductSummaryOutput;
 import com.algaworks.algashop.product.catalog.domain.model.product.Product;
@@ -9,6 +10,7 @@ import org.jspecify.annotations.NullMarked;
 import org.mapstruct.AnnotateWith;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.springframework.data.domain.Page;
 
 import static org.mapstruct.MappingConstants.ComponentModel.SPRING;
 
@@ -24,5 +26,8 @@ public interface ProductDisassembler {
     @Mapping(target = "slug", expression = "java(Slugfier.slugify(domainModel.getName()))")
     @Mapping(target = "quantityInStock", source = "stockAmount")
     ProductSummaryOutput toSummaryOutput(final Product domainModel);
+
+
+    PageModel<ProductSummaryOutput> toPagedSummaryOutput(final Page<Product> page);
 
 }
