@@ -10,7 +10,6 @@ import org.springframework.data.domain.Sort.Direction;
 import static lombok.AccessLevel.PROTECTED;
 
 @Data
-@NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public abstract class SortablePageFilter<T> extends PageFilter {
 
@@ -21,7 +20,7 @@ public abstract class SortablePageFilter<T> extends PageFilter {
     @Nullable
     private Direction sortDirection;
 
-    protected SortablePageFilter(int pageNumber, int pageSize) {
+    protected SortablePageFilter(final Integer pageNumber, final Integer pageSize) {
         super(pageSize, pageNumber);
     }
 

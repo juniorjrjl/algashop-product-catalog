@@ -15,7 +15,7 @@ import java.util.List;
 @Configuration
 class MongoConfig {
 
-    @Bean
+    //@Bea ativado usando o application.yaml na config spring.data.mongodb.representation=uuid
     MongoClientSettingsBuilderCustomizer uuidCustomizer(){
         return builder -> builder.uuidRepresentation(UuidRepresentation.STANDARD);
     }

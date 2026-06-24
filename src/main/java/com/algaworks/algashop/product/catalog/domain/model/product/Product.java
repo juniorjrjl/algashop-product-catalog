@@ -12,9 +12,13 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.Version;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.index.TextIndexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.data.mongodb.core.mapping.TextScore;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -28,12 +32,22 @@ import static lombok.AccessLevel.PRIVATE;
 
 @Document(collection = "products")
 @Getter
+@CompoundIndex(name = "pidx_product_by_category_enabledTrue_salePrice",
+        def = "{'categoryId': 1, 'salePrice': 1}",
+        partialFilter = "{'enabled': true}")
+@CompoundIndex(name = "pidx_product_by_category_enabledTrue_addedAt",
+        def = "{'categoryId': 1, 'addedAt': -1}",
+        partialFilter = "{'enabled': true}"
+)
 public class Product {
 
     @Setter(PRIVATE)
     private UUID id;
+    @TextIndexed(weight = 1)
     private String name;
+    @Indexed(name = "idx_product_brand")
     private String brand;
+    @TextIndexed(weight = 5)
     @Setter
     @Nullable
     private String description;
@@ -60,11 +74,13 @@ public class Product {
     @Version
     private Long version;
     @DocumentReference
-    @Field(name = "category_id")
+    @Field(name = "categoryId")
     @Setter
     private Category category;
     @Nullable
     private Integer discountPercentageRounded;
+    @TextScore
+    private Float score;
 
     @Builder
     public Product(final String name,

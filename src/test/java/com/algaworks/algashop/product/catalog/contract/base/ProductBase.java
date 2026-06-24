@@ -3,6 +3,7 @@ package com.algaworks.algashop.product.catalog.contract.base;
 import com.algaworks.algashop.product.catalog.application.ResourceNotFoundException;
 import com.algaworks.algashop.product.catalog.application.product.management.ProductManagementApplicationService;
 import com.algaworks.algashop.product.catalog.application.product.query.PageModel;
+import com.algaworks.algashop.product.catalog.application.product.query.ProductFilter;
 import com.algaworks.algashop.product.catalog.application.product.query.ProductQueryService;
 import com.algaworks.algashop.product.catalog.application.product.query.ProductSummaryOutput;
 import com.algaworks.algashop.product.catalog.presentation.ProductController;
@@ -108,7 +109,20 @@ class ProductBase {
                 .totalPages(1)
                 .totalElements(2)
                 .build();
-        when(queryService.filter(10, 0)).thenReturn(page);
+        final var inputFilter = new ProductFilter(
+                0,
+                10,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+        when(queryService.filter(inputFilter)).thenReturn(page);
     }
 
     private void findByIdMocks() {

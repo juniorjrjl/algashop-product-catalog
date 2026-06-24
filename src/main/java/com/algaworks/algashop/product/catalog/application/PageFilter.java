@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PageFilter {
 
-    private int size = 15;
-    private int page = 0;
+    private Integer size = 15;
+    private Integer page = 0;
 
 }
