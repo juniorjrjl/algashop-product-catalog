@@ -7,6 +7,8 @@ import org.jspecify.annotations.NullMarked;
 import org.mapstruct.AnnotateWith;
 import org.mapstruct.Mapper;
 
+import java.util.List;
+
 import static org.mapstruct.MappingConstants.ComponentModel.SPRING;
 
 @AnnotateWith(NullMarked.class)
@@ -14,5 +16,7 @@ import static org.mapstruct.MappingConstants.ComponentModel.SPRING;
 public interface CategoryDisassembler {
 
     CategoryDetailOutput toDetailOutput(final Category domain);
+
+    List<CategoryDetailOutput> toDetailOutput(final List<Category> domain);
 
 }

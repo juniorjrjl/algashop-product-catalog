@@ -3,6 +3,7 @@ package com.algaworks.algashop.product.catalog.presentation;
 import com.algaworks.algashop.product.catalog.application.category.management.CategoryInput;
 import com.algaworks.algashop.product.catalog.application.category.management.CategoryManagementApplicationService;
 import com.algaworks.algashop.product.catalog.application.category.query.CategoryDetailOutput;
+import com.algaworks.algashop.product.catalog.application.category.query.CategoryFilter;
 import com.algaworks.algashop.product.catalog.application.category.query.CategoryQueryService;
 import com.algaworks.algashop.product.catalog.application.product.query.PageModel;
 import jakarta.validation.Valid;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -32,9 +32,8 @@ public class CategoryController {
     private final CategoryManagementApplicationService categoryManagementService;
 
     @GetMapping
-    public PageModel<CategoryDetailOutput> filter(@RequestParam(defaultValue = "0") final Integer page,
-                                                  @RequestParam(defaultValue = "10") final Integer size) {
-        return categoryQueryService.filter(size,page);
+    public PageModel<CategoryDetailOutput> filter(final CategoryFilter filter) {
+        return categoryQueryService.filter(filter);
     }
 
     @PostMapping

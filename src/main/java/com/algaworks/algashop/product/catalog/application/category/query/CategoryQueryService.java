@@ -8,7 +8,7 @@ import java.util.UUID;
 @Service
 public interface CategoryQueryService {
 
-    PageModel<CategoryDetailOutput> filter(final Integer size, final Integer number);
+    PageModel<CategoryDetailOutput> filter(final CategoryFilter filter);
 
     CategoryDetailOutput findById(final UUID categoryId);
 

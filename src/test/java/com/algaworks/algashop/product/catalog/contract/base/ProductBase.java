@@ -120,6 +120,8 @@ class ProductBase {
                 null,
                 null,
                 null,
+                new UUID[]{},
+                null,
                 null
         );
         when(queryService.filter(inputFilter)).thenReturn(page);

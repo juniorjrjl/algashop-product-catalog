@@ -11,10 +11,8 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
-import static java.util.Objects.isNull;
-
 @Getter
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
 public class ProductFilter extends SortablePageFilter<ProductFilter.SortType> {
 
     @Nullable
@@ -40,6 +38,8 @@ public class ProductFilter extends SortablePageFilter<ProductFilter.SortType> {
                          final Integer pageNumber,
                          @Nullable
                          final Integer pageSize,
+                         final ProductFilter. @Nullable SortType sortByProperty,
+                         final Sort. @Nullable Direction sortDirection,
                          @Nullable
                          final String term,
                          @Nullable
@@ -58,7 +58,7 @@ public class ProductFilter extends SortablePageFilter<ProductFilter.SortType> {
                          final OffsetDateTime createdAtFrom,
                          @Nullable
                          final OffsetDateTime createdAtTo) {
-        super(isNull(pageNumber) ? 0 : pageNumber, isNull(pageSize) ? 15 : pageSize);
+        super(pageNumber, pageSize, sortByProperty, sortDirection);
         this.term = term;
         this.hasDiscount = hasDiscount;
         this.enabled = enabled;
@@ -75,10 +75,6 @@ public class ProductFilter extends SortablePageFilter<ProductFilter.SortType> {
         return SortType.CREATED_AT;
     }
 
-    @Override
-    public Sort.Direction getSortDirectionOrDefault() {
-        return Sort.Direction.ASC;
-    }
 
     @Getter
     @RequiredArgsConstructor

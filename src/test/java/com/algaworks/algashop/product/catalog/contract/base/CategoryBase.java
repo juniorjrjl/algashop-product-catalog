@@ -92,7 +92,7 @@ class CategoryBase {
                 .totalPages(1)
                 .content(CategoryDetailOutputDataBuilder.builder().buildList(2))
                 .build();
-        when(queryService.filter(any(), any()))
+        when(queryService.filter(any()))
                 .thenReturn(page);
     }
 
