@@ -1,9 +1,11 @@
 package com.algaworks.algashop.product.catalog.application.product.query;
 
+import com.algaworks.algashop.product.catalog.utility.Slugfier;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.jspecify.annotations.Nullable;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -25,9 +27,13 @@ public class ProductSummaryOutput {
     private Boolean enabled;
     private CategoryMinimalOutput category;
     private String shortDescription;
-    private String slug;
     private Boolean hasDiscount;
     private Integer quantityInStock;
     private Integer discountPercentageRounded;
+
+    @Nullable
+    public String getSlug(){
+        return Slugfier.slugify(this.name);
+    }
 
 }
