@@ -13,8 +13,8 @@ spring:
       auto-index-creation: true #not use in production
 algashop:
   data-load:
-    enabled: true
-    auto-clean: true
+    enabled: false
+    auto-clean: false
     sources:
       - location: db/testdata/categories.json
         collection: categories

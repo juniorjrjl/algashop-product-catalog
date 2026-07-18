@@ -5,6 +5,7 @@ import com.algaworks.algashop.product.catalog.domain.model.IdGenerator;
 import com.algaworks.algashop.product.catalog.domain.model.category.Category;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.jspecify.annotations.Nullable;
 import org.springframework.data.annotation.CreatedBy;
@@ -16,8 +17,6 @@ import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.index.TextIndexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.DocumentReference;
-import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.TextScore;
 
 import java.math.BigDecimal;
@@ -29,9 +28,11 @@ import static java.math.RoundingMode.HALF_UP;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static lombok.AccessLevel.PRIVATE;
+import static lombok.AccessLevel.PROTECTED;
 
 @Document(collection = "products")
 @Getter
+@NoArgsConstructor(access = PROTECTED)
 @CompoundIndex(name = "pidx_product_by_category_enabledTrue_salePrice",
         def = "{'categoryId': 1, 'salePrice': 1}",
         partialFilter = "{'enabled': true}")
@@ -73,12 +74,13 @@ public class Product {
     @Nullable
     @Version
     private Long version;
-    @DocumentReference
-    @Field(name = "categoryId")
     @Setter
-    private Category category;
+    private UUID categoryId;
+    @Setter
+    private ProductCategory category;
     @Nullable
     private Integer discountPercentageRounded;
+    @Nullable
     @TextScore
     private Float score;
 
@@ -97,7 +99,8 @@ public class Product {
         this.setEnabled(enabled);
         this.setRegularPrice(regularPrice);
         this.setSalePrice(salePrice);
-        this.setCategory(category);
+        this.setCategoryId(category.getId());
+        this.setCategory(ProductCategory.of(category));
     }
 
     public void setName(final String name) {
