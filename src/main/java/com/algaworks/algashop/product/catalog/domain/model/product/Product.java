@@ -34,10 +34,10 @@ import static lombok.AccessLevel.PROTECTED;
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @CompoundIndex(name = "pidx_product_by_category_enabledTrue_salePrice",
-        def = "{'categoryId': 1, 'salePrice': 1}",
+        def = "{'category.Id': 1, 'salePrice': 1}",
         partialFilter = "{'enabled': true}")
-@CompoundIndex(name = "pidx_product_by_category_enabledTrue_addedAt",
-        def = "{'categoryId': 1, 'addedAt': -1}",
+@CompoundIndex(name = "pidx_product_by_category_enabledTrue_createdAt",
+        def = "{'categoryId': 1, 'createdAt': -1}",
         partialFilter = "{'enabled': true}"
 )
 public class Product {
@@ -75,8 +75,6 @@ public class Product {
     @Version
     private Long version;
     @Setter
-    private UUID categoryId;
-    @Setter
     private ProductCategory category;
     @Nullable
     private Integer discountPercentageRounded;
@@ -99,7 +97,6 @@ public class Product {
         this.setEnabled(enabled);
         this.setRegularPrice(regularPrice);
         this.setSalePrice(salePrice);
-        this.setCategoryId(category.getId());
         this.setCategory(ProductCategory.of(category));
     }
 
