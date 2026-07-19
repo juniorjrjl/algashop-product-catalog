@@ -13,6 +13,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.Version;
+import org.springframework.data.domain.AbstractAggregateRoot;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.index.TextIndexed;
@@ -27,6 +28,7 @@ import java.util.UUID;
 import static java.math.RoundingMode.HALF_UP;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static java.util.Objects.requireNonNull;
 import static lombok.AccessLevel.PRIVATE;
 import static lombok.AccessLevel.PROTECTED;
 
@@ -40,7 +42,7 @@ import static lombok.AccessLevel.PROTECTED;
         def = "{'categoryId': 1, 'createdAt': -1}",
         partialFilter = "{'enabled': true}"
 )
-public class Product {
+public class Product extends AbstractAggregateRoot<Product> {
 
     @Setter(PRIVATE)
     private UUID id;
@@ -53,7 +55,6 @@ public class Product {
     @Nullable
     private String description;
     private Integer stockAmount = 0;
-    @Setter
     private boolean enabled;
     @Nullable
     private BigDecimal regularPrice;
@@ -98,6 +99,7 @@ public class Product {
         this.setRegularPrice(regularPrice);
         this.setSalePrice(salePrice);
         this.setCategory(ProductCategory.of(category));
+        super.registerEvent(ProductAddedEvent.builder().productId(this.id).build());
     }
 
     public void setName(final String name) {
@@ -114,34 +116,6 @@ public class Product {
         this.brand = brand;
     }
 
-    public void setRegularPrice(final BigDecimal regularPrice) {
-        if (regularPrice.signum() == -1) {
-            throw new IllegalArgumentException();
-        }
-
-        if (isNull(salePrice)){
-            this.salePrice = regularPrice;
-        } else if (regularPrice.compareTo(this.salePrice) < 0){
-            throw new DomainException("The sale price cannot be higher than the regular price");
-        }
-        this.regularPrice = regularPrice;
-        this.calculateDiscountPercentage();
-    }
-
-    public  void setSalePrice(final BigDecimal salePrice) {
-        if (salePrice.signum() == -1) {
-            throw new IllegalArgumentException();
-        }
-
-        if (isNull(regularPrice)){
-            this.regularPrice = salePrice;
-        } else if (regularPrice.compareTo(this.salePrice) < 0){
-            throw new DomainException("The sale price cannot be higher than the regular price");
-        }
-        this.salePrice = salePrice;
-        this.calculateDiscountPercentage();
-    }
-
     public void enable() {
         setEnabled(true);
     }
@@ -154,8 +128,100 @@ public class Product {
         return stockAmount > 0;
     }
 
+    public void setEnabled(final boolean enabled) {
+        final var wasEnabled = this.enabled;
+        this.enabled = enabled;
+        if (wasEnabled && !this.isEnabled()) {
+            this.registerEvent(ProductDelistedEvent.builder()
+                    .productId(this.getId())
+                    .build());
+        } else if (!wasEnabled && this.isEnabled()) {
+            this.registerEvent(ProductListedEvent.builder()
+                    .productId(this.getId())
+                    .build());
+        }
+    }
+
     public boolean getHasDiscount(){
         return nonNull(getDiscountPercentageRounded()) && getDiscountPercentageRounded() > 0;
+    }
+
+    public void changePrice(final BigDecimal regularPrice, final BigDecimal salePrice){
+
+        final var oldRegularPrice = getRegularPrice();
+        final var oldSalePrice = getSalePrice();
+        final var wasOnSale = getHasDiscount();
+
+        if (regularPrice.compareTo(salePrice) < 0){
+            throw new DomainException("The sale price cannot be higher than the regular price");
+        }
+
+        setRegularPrice(regularPrice);
+        setSalePrice(salePrice);
+
+        if (priceDidNotChanged(oldRegularPrice, oldSalePrice)){
+            return;
+        }
+
+        registerPriceChangedEvent(oldRegularPrice, oldSalePrice);
+
+        if (isNewlyOnSale(wasOnSale)){
+            registerProductPlacedOnSaleEvent();
+        }
+
+    }
+
+    private void registerProductPlacedOnSaleEvent() {
+        final var event = ProductPlacedOnSaleEvent.builder()
+                .id(getId())
+                .regularPrice(requireNonNull(getRegularPrice()))
+                .salePrice(requireNonNull(getSalePrice()))
+                .build();
+        super.registerEvent(event);
+    }
+
+    private boolean isNewlyOnSale(final boolean wasOnSale) {
+        return getHasDiscount() && !wasOnSale;
+    }
+
+    private void registerPriceChangedEvent(@Nullable
+                                           final BigDecimal oldRegularPrice,
+                                           @Nullable
+                                           final BigDecimal oldSalePrice) {
+        final var event = ProductPriceChangedEvent.builder()
+                .id(getId())
+                .oldRegularPrice(oldRegularPrice)
+                .oldSalePrice(oldSalePrice)
+                .newRegularPrice(requireNonNull(getRegularPrice()))
+                .newSalePrice(requireNonNull(getSalePrice()))
+                .build();
+        super.registerEvent(event);
+    }
+
+    private boolean priceDidNotChanged(@Nullable
+                                       final BigDecimal oldRegularPrice,
+                                       @Nullable
+                                       final BigDecimal oldSalePrice) {
+        return Objects.equals(oldRegularPrice, getRegularPrice()) &&
+                Objects.equals(oldSalePrice, getSalePrice());
+    }
+
+    private void setRegularPrice(final BigDecimal regularPrice) {
+        if (regularPrice.signum() == -1) {
+            throw new IllegalArgumentException();
+        }
+
+        this.regularPrice = regularPrice;
+        this.calculateDiscountPercentage();
+    }
+
+    private void setSalePrice(final BigDecimal salePrice) {
+        if (salePrice.signum() == -1) {
+            throw new IllegalArgumentException();
+        }
+
+        this.salePrice = salePrice;
+        this.calculateDiscountPercentage();
     }
 
     @Override
