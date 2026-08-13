@@ -104,6 +104,36 @@ tasks.withType<Test> {
 	systemProperty("test.seed", System.getProperty("test.seed") ?: "")
 }
 
+tasks.register<Test>("integrationTest"){
+	description = "Run unit tests."
+	group = "verification"
+
+	jvmArgs("-javaagent:${mockitoAgent.asPath}")
+
+	testClassesDirs = tasks.test.get().testClassesDirs
+	classpath = tasks.test.get().classpath
+
+	useJUnitPlatform{
+		includeTags("IntegrationTest")
+	}
+	systemProperty("test.seed", System.getProperty("test.seed") ?: "")
+}
+
+tasks.register<Test>("unitTest"){
+	description = "Run unit tests."
+	group = "verification"
+
+	jvmArgs("-javaagent:${mockitoAgent.asPath}")
+
+	testClassesDirs = tasks.test.get().testClassesDirs
+	classpath = tasks.test.get().classpath
+
+	useJUnitPlatform{
+		includeTags("UnitTest")
+	}
+	systemProperty("test.seed", System.getProperty("test.seed") ?: "")
+}
+
 tasks.contractTest {
 	outputs.dir(project.property("snippetsDir") as File)
 	useJUnitPlatform()

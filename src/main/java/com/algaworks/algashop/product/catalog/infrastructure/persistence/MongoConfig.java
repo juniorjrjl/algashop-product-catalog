@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.List;
 
 @Configuration
-class MongoConfig {
+public class MongoConfig {
 
     //@Bea ativado usando o application.yaml na config spring.data.mongodb.representation=uuid
     MongoClientSettingsBuilderCustomizer uuidCustomizer(){
