@@ -7,6 +7,7 @@ import com.algaworks.algashop.product.catalog.domain.model.category.CategoryRepo
 import com.algaworks.algashop.product.catalog.domain.model.product.Product;
 import com.algaworks.algashop.product.catalog.domain.model.product.ProductNotFoundException;
 import com.algaworks.algashop.product.catalog.domain.model.product.ProductRepository;
+import com.algaworks.algashop.product.catalog.domain.model.product.StockService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,7 @@ public class ProductManagementApplicationService {
     private final ProductRepository repository;
     private final CategoryRepository categoryRepository;
     private final ProductAssembler assembler;
+    private final StockService stockService;
 
     public UUID create(final ProductInput input) {
         final var category = findCategoryById(input.getCategoryId());
@@ -44,6 +46,16 @@ public class ProductManagementApplicationService {
         final var domainModel = findById(id);
         domainModel.enable();
         repository.save(domainModel);
+    }
+
+    public void restock(final UUID id, final int stockAmount) {
+        final var domainModel = findById(id);
+        stockService.restock(domainModel.getId(), stockAmount);
+    }
+
+    public void withdraw(final UUID id, final int stockAmount) {
+        final var domainModel = findById(id);
+        stockService.withdraw(domainModel.getId(), stockAmount);
     }
 
     private Product findById(final UUID id) {

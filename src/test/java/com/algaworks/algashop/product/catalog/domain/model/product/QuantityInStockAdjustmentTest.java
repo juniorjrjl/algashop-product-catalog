@@ -88,4 +88,16 @@ class QuantityInStockAdjustmentTest {
 
     }
 
+    @Test
+    void shouldCalculate(){
+        final var product = productRepository.findById(existingProductId).orElseThrow();
+
+        final var stockAmount = customFaker.number().numberBetween(1, product.getStockAmount());
+        final var actual = quantityInStockAdjustment.decrease(existingProductId, stockAmount);
+
+        assertThat(actual.productId()).isEqualTo(existingProductId);
+        assertThat(actual.previousStockAmount()).isEqualTo(product.getStockAmount());
+        assertThat(actual.newStockAmount()).isEqualTo(product.getStockAmount() - stockAmount);
+    }
+
 }

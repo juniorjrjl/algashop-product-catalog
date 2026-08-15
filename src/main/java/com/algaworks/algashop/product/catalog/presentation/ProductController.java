@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -75,6 +74,18 @@ public class ProductController {
     @GetMapping
     public PageModel<ProductSummaryOutput> filter(final ProductFilter filter) {
         return queryService.filter(filter);
+    }
+
+    @PostMapping("/{id}/restock")
+    @ResponseStatus(NO_CONTENT)
+    public void restock(@PathVariable final UUID id, @RequestBody @Valid final ProductQuantityModel quantity) {
+        applicationService.restock(id, quantity.getAmount());
+    }
+
+    @PostMapping("/{id}/withdraw")
+    @ResponseStatus(NO_CONTENT)
+    public void withdraw(@PathVariable final UUID id, @RequestBody @Valid final ProductQuantityModel quantity) {
+        applicationService.withdraw(id, quantity.getAmount());
     }
 
 }

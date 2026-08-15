@@ -5,6 +5,8 @@ import com.algaworks.algashop.product.catalog.domain.model.product.ProductDelist
 import com.algaworks.algashop.product.catalog.domain.model.product.ProductListedEvent;
 import com.algaworks.algashop.product.catalog.domain.model.product.ProductPlacedOnSaleEvent;
 import com.algaworks.algashop.product.catalog.domain.model.product.ProductPriceChangedEvent;
+import com.algaworks.algashop.product.catalog.domain.model.product.ProductRestockedEvent;
+import com.algaworks.algashop.product.catalog.domain.model.product.ProductSoldOutEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -36,6 +38,16 @@ public class ProductEventListener {
     @EventListener(ProductListedEvent.class)
     public void handle(final ProductListedEvent event) {
         log.info("ProductListedEvent {}", event);
+    }
+
+    @EventListener(ProductRestockedEvent.class)
+    public void handle(final ProductRestockedEvent  event) {
+        log.info("ProductRestockedEvent  {}", event);
+    }
+
+    @EventListener(ProductSoldOutEvent.class)
+    public void handle(final ProductSoldOutEvent event) {
+        log.info("ProductSoldOutEvent {}", event);
     }
 
 }
