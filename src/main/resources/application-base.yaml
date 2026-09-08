@@ -5,16 +5,15 @@ spring:
   application:
     name: product-catalog
   mongodb:
-    uri: mongodb://root:algashop@localhost:27017/product_catalog?authSource=admin
     representation:
       uuid: standard
   data:
     mongodb:
-      auto-index-creation: true #not use in production
+      auto-index-creation: false #not use in production
 algashop:
   data-load:
-    enabled: true
-    auto-clean: true
+    enabled: false
+    auto-delete: false
     sources:
       - location: db/testdata/categories.json
         collection: categories

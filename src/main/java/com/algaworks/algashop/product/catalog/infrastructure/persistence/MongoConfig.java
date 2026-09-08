@@ -5,6 +5,8 @@ import org.springframework.boot.mongodb.autoconfigure.MongoClientSettingsBuilder
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.data.mongodb.MongoDatabaseFactory;
+import org.springframework.data.mongodb.MongoTransactionManager;
 import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
 
 import java.time.OffsetDateTime;
@@ -15,7 +17,7 @@ import java.util.List;
 @Configuration
 public class MongoConfig {
 
-    //@Bea ativado usando o application.yaml na config spring.data.mongodb.representation=uuid
+    //@Bea ativado usando o application-base.yaml na config spring.data.mongodb.representation=uuid
     MongoClientSettingsBuilderCustomizer uuidCustomizer(){
         return builder -> builder.uuidRepresentation(UuidRepresentation.STANDARD);
     }
@@ -28,6 +30,11 @@ public class MongoConfig {
                         new OffsetDateTimeWriteConverter()
                 )
         );
+    }
+
+    @Bean
+    MongoTransactionManager transactionManager(final MongoDatabaseFactory mongoDatabaseFactory) {
+        return new MongoTransactionManager(mongoDatabaseFactory);
     }
 
     public static class OffsetDateTimeReaderConverter implements Converter<Date, OffsetDateTime> {

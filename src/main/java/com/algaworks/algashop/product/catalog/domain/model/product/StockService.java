@@ -14,7 +14,7 @@ public class StockService {
     private final QuantityInStockAdjustment quantityInStockAdjustment;
     private final DomainEventPublisher domainEventPublisher;
 
-    public void restock(final UUID productId, final Integer stockAmount) {
+    public StockMovement restock(final UUID productId, final Integer stockAmount) {
         if (stockAmount < 1) {
             throw new IllegalArgumentException();
         }
@@ -29,9 +29,17 @@ public class StockService {
         if (result.inRestocked()){
             domainEventPublisher.publish(ProductRestockedEvent.builder().id(productId).build());
         }
+
+        return StockMovement.builder()
+                .productId(productId)
+                .movementAmount(stockAmount)
+                .previousAmount(result.previousStockAmount())
+                .newAmount(result.newStockAmount())
+                .movementType(StockMovement.MovementType.STOCK_IN)
+                .build();
     }
 
-    public void withdraw(final UUID productId, final Integer stockAmount) {
+    public StockMovement withdraw(final UUID productId, final Integer stockAmount) {
         if (stockAmount < 1) {
             throw new IllegalArgumentException();
         }
@@ -46,6 +54,14 @@ public class StockService {
         if (result.isOutOfStock()){
             domainEventPublisher.publish(ProductSoldOutEvent.builder().id(productId).build());
         }
+
+        return StockMovement.builder()
+                .productId(productId)
+                .movementAmount(stockAmount)
+                .previousAmount(result.previousStockAmount())
+                .newAmount(result.newStockAmount())
+                .movementType(StockMovement.MovementType.STOCK_OUT)
+                .build();
     }
 
 }

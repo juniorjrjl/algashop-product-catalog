@@ -7,9 +7,11 @@ import com.algaworks.algashop.product.catalog.domain.model.category.CategoryRepo
 import com.algaworks.algashop.product.catalog.domain.model.product.Product;
 import com.algaworks.algashop.product.catalog.domain.model.product.ProductNotFoundException;
 import com.algaworks.algashop.product.catalog.domain.model.product.ProductRepository;
+import com.algaworks.algashop.product.catalog.domain.model.product.StockMovementRepository;
 import com.algaworks.algashop.product.catalog.domain.model.product.StockService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -18,6 +20,7 @@ import java.util.UUID;
 public class ProductManagementApplicationService {
 
     private final ProductRepository repository;
+    private final StockMovementRepository stockMovementRepository;
     private final CategoryRepository categoryRepository;
     private final ProductAssembler assembler;
     private final StockService stockService;
@@ -48,14 +51,18 @@ public class ProductManagementApplicationService {
         repository.save(domainModel);
     }
 
+    @Transactional
     public void restock(final UUID id, final int stockAmount) {
         final var domainModel = findById(id);
-        stockService.restock(domainModel.getId(), stockAmount);
+        final var movement = stockService.restock(domainModel.getId(), stockAmount);
+        stockMovementRepository.save(movement);
     }
 
+    @Transactional
     public void withdraw(final UUID id, final int stockAmount) {
         final var domainModel = findById(id);
-        stockService.withdraw(domainModel.getId(), stockAmount);
+        final var movement = stockService.withdraw(domainModel.getId(), stockAmount);
+        stockMovementRepository.save(movement);
     }
 
     private Product findById(final UUID id) {
