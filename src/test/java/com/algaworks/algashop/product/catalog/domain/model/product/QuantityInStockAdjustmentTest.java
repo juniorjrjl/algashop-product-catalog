@@ -6,21 +6,28 @@ import com.algaworks.algashop.product.catalog.infrastructure.persistence.dataloa
 import com.algaworks.algashop.product.catalog.infrastructure.persistence.product.QuantityInStockAdjustmentMongoImpl;
 import com.algaworks.algashop.product.catalog.infrastructure.persistence.product.StockUpdateFailerException;
 import com.algaworks.algashop.product.catalog.utility.CustomFaker;
+import com.algaworks.algashop.product.catalog.utility.extesion.MongoContainer;
+import com.algaworks.algashop.product.catalog.utility.extesion.MongoDBTestContainerExtension;
 import com.algaworks.algashop.product.catalog.utility.tag.IntegrationTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.DefaultApplicationArguments;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.data.mongodb.test.autoconfigure.DataMongoTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.mongodb.MongoDBContainer;
 
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@DataMongoTest
+@SpringBootTest
+@ExtendWith(MongoDBTestContainerExtension.class)
 @Import({
         MongoConfig.class,
         QuantityInStockAdjustmentMongoImpl.class,
@@ -43,11 +50,18 @@ class QuantityInStockAdjustmentTest {
     @Autowired
     private DataLoader dataLoader;
 
+    @MongoContainer
+    private static MongoDBContainer mongoDBContainer;
 
     @BeforeEach
     void setUp() throws Exception {
         dataLoader.run(new DefaultApplicationArguments());
         CustomFaker.getInstance().reseed();
+    }
+
+    @DynamicPropertySource
+    public static void configurePropertySource(final DynamicPropertyRegistry registry) {
+        registry.add("spring.mongodb.uri", mongoDBContainer::getReplicaSetUrl);
     }
 
     @Test

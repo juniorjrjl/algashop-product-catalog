@@ -78,8 +78,11 @@ dependencies {
 	testImplementation(libs.spring.boot.starter.test)
 	testImplementation(libs.spring.boot.starter.validation.test)
 	testImplementation(libs.spring.boot.starter.webmvc.test)
+	testImplementation(libs.spring.boot.testcontainers)
 	testImplementation(libs.spring.cloud.starter.contract.verifier)
 	testImplementation(libs.spring.restdocs.mockmvc)
+	testImplementation(libs.testcontainers.junit)
+	testImplementation(libs.testcontainers.mongo)
 
 	testRuntimeOnly(libs.junit.platform.launcher)
 }
